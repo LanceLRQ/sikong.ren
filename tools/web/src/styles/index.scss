@@ -1,0 +1,21 @@
+body, html, #root {
+  height: 100%;
+  overflow: hidden;
+}
+.site-root {
+  height: 100%;
+  .ant-layout-header {
+    .logo {
+      color: white;
+      float: left;
+      width: $width-11;
+      height: $width-7;
+      line-height: $width-7;
+      margin: $width-4 $width-6 $width-4 0;
+    }
+  }
+  .root-layout {
+    height: 100%;
+    overflow: auto;
+  }
+}
