@@ -1,7 +1,26 @@
-server:
-  listen: 127.0.0.1
-  port: 8975
-  store: ./store
+redis:
+  host: 127.0.0.1
+  port: 6379
+  password: 12345678
 
-bilibili:
-  room_id: 102
+mysql:
+  host: 127.0.0.1
+  port: 3306
+  user: root
+  password: 12345678
+
+server:
+  listen: 0.0.0.0
+  port: 8975
+  storages: ./storages
+  redis_db: 1
+  mysql_db_name: sikongren
+  danmaku_rpc:
+
+websocket:
+  listen: 0.0.0.0
+  port: 8976
+
+danmaku:
+  rpc_listen: 0.0.0.0
+  rpc_port: 8977

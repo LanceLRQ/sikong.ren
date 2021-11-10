@@ -73,7 +73,7 @@ func AddRiddle (ctx iris.Context) {
 
 	// 写入图片
 	if typeId == 1 {
-		imgPath := filepath.Join(server.Config.Server.Store, fmt.Sprintf("riddle_%d.png", newItem.Id))
+		imgPath := filepath.Join(server.Config.Server.Storages, fmt.Sprintf("riddle_%d.png", newItem.Id))
 		newItem.Image = imgPath
 		imgBytes, err := base64.StdEncoding.DecodeString(images)
 		if err != nil {
@@ -125,7 +125,7 @@ func EditRiddle (ctx iris.Context) {
 		}
 
 		err = ioutil.WriteFile(
-			filepath.Join(filepath.Join(server.Config.Server.Store, fmt.Sprintf("riddle_%d.png", id))),
+			filepath.Join(filepath.Join(server.Config.Server.Storages, fmt.Sprintf("riddle_%d.png", id))),
 			imgBytes,
 			os.ModePerm,
 		)

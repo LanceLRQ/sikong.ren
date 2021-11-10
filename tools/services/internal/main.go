@@ -10,7 +10,7 @@ import (
 	"launcher/internal/views"
 )
 
-func runHttpServer() error {
+func runHttpServer(address string) error {
 	app := iris.New()
 
 	if server.Config.DebugMode {
@@ -26,7 +26,12 @@ func runHttpServer() error {
 
 	views.RegisterRouter(app)
 
-	err := app.Run(iris.Addr(fmt.Sprintf("%s:%d", server.Config.Server.Listen, server.Config.Server.Port)))
+	// 判断是否要覆盖监听
+	if address == "" {
+		address = fmt.Sprintf("%s:%d", server.Config.Server.Listen, server.Config.Server.Port)
+	}
+
+	err := app.Run(iris.Addr(address))
 	if err != nil { return err }
 
 	return err
@@ -41,7 +46,7 @@ func RunServer (configFile string, address string) error {
 	// 启动弹幕姬
 	go biz.InitDanmakuService()
 	// Run server
-	err = runHttpServer()
+	err = runHttpServer(address)
 	if err != nil { return err }
 	return nil
 }

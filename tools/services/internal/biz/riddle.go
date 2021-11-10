@@ -10,7 +10,7 @@ import (
 )
 
 func LoadRiddleList() {
-	jsonFile, err := ioutil.ReadFile(filepath.Join(server.Config.Server.Store, "./riddle.json"))
+	jsonFile, err := ioutil.ReadFile(filepath.Join(server.Config.Server.Storages, "./riddle.json"))
 	if err != nil {
 		return
 	}
@@ -18,5 +18,5 @@ func LoadRiddleList() {
 }
 func SaveRiddleList() error {
 	body := utils.ObjectToJSONByte(&server.RiddleListConfig, false)
-	return ioutil.WriteFile(filepath.Join(server.Config.Server.Store, "./riddle.json"), body, fs.ModePerm)
+	return ioutil.WriteFile(filepath.Join(server.Config.Server.Storages, "./riddle.json"), body, fs.ModePerm)
 }

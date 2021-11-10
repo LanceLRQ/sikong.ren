@@ -41,9 +41,9 @@ func LoadConfiguration(path string) error {
 		return fmt.Errorf("failed to unmarshal configuration: %s", err.Error())
 	}
 	// parse store
-	storePath, err := filepath.Abs(Config.Server.Store)
+	storePath, err := filepath.Abs(Config.Server.Storages)
 	if err != nil {
-		Config.Server.Store = storePath
+		Config.Server.Storages = storePath
 	}
 	storeDir, err := os.Stat(storePath)
 	if err != nil {

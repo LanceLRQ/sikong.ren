@@ -3,14 +3,14 @@ package main
 import (
 	"github.com/urfave/cli/v2"
 	"launcher/internal"
+	"launcher/internal/biz/danmaku"
 	"log"
 	"os"
 )
 
 func main () {
 	app := &cli.App{
-		Name: "Draw For Guess Server",
-		Usage: "Start a game server!",
+		Name: "sikong.ren tools services",
 		Flags: []cli.Flag {
 			&cli.StringFlag{
 				Name: "config",
@@ -21,7 +21,7 @@ func main () {
 			&cli.StringFlag{
 				Name: "listen",
 				Aliases: []string { "l" },
-				Value: "127.0.0.1:8460",
+				Value: "",
 				Usage: "listen address",
 			},
 		},
@@ -29,7 +29,37 @@ func main () {
 			return internal.RunServer(context.String("config"), context.String("listen"))
 		},
 		Commands: []*cli.Command{
-
+			&cli.Command{
+				Name: "danmaku",
+				Action: func(context *cli.Context) error {
+					if context.Bool("c") {
+						danmaku.RunClient()
+					} else {
+						danmaku.RunServer()
+					}
+					return nil
+				},
+				Flags: []cli.Flag{
+					&cli.BoolFlag{
+						Name: "c",
+						Value: false,
+					},
+				},
+			},
+			&cli.Command{
+				Name: "httpserver",
+				Aliases: []string{ "server", "http" },
+				Action: func(context *cli.Context) error {
+					return nil
+				},
+			},
+			&cli.Command{
+				Name: "websocket",
+				Aliases: []string{ "ws" },
+				Action: func(context *cli.Context) error {
+					return nil
+				},
+			},
 		},
 	}
 
