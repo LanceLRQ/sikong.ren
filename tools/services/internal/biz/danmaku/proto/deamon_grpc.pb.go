@@ -18,7 +18,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DanmakuDaemonClient interface {
-	StartWatcher(ctx context.Context, in *StartWatcherRequest, opts ...grpc.CallOption) (*StartWatcherResponse, error)
+	StartWatcher(ctx context.Context, in *WatcherRequest, opts ...grpc.CallOption) (*WatcherResponse, error)
+	StopWatcher(ctx context.Context, in *WatcherRequest, opts ...grpc.CallOption) (*WatcherResponse, error)
 }
 
 type danmakuDaemonClient struct {
@@ -29,9 +30,18 @@ func NewDanmakuDaemonClient(cc grpc.ClientConnInterface) DanmakuDaemonClient {
 	return &danmakuDaemonClient{cc}
 }
 
-func (c *danmakuDaemonClient) StartWatcher(ctx context.Context, in *StartWatcherRequest, opts ...grpc.CallOption) (*StartWatcherResponse, error) {
-	out := new(StartWatcherResponse)
+func (c *danmakuDaemonClient) StartWatcher(ctx context.Context, in *WatcherRequest, opts ...grpc.CallOption) (*WatcherResponse, error) {
+	out := new(WatcherResponse)
 	err := c.cc.Invoke(ctx, "/danmaku.DanmakuDaemon/StartWatcher", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *danmakuDaemonClient) StopWatcher(ctx context.Context, in *WatcherRequest, opts ...grpc.CallOption) (*WatcherResponse, error) {
+	out := new(WatcherResponse)
+	err := c.cc.Invoke(ctx, "/danmaku.DanmakuDaemon/StopWatcher", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +52,8 @@ func (c *danmakuDaemonClient) StartWatcher(ctx context.Context, in *StartWatcher
 // All implementations must embed UnimplementedDanmakuDaemonServer
 // for forward compatibility
 type DanmakuDaemonServer interface {
-	StartWatcher(context.Context, *StartWatcherRequest) (*StartWatcherResponse, error)
+	StartWatcher(context.Context, *WatcherRequest) (*WatcherResponse, error)
+	StopWatcher(context.Context, *WatcherRequest) (*WatcherResponse, error)
 	mustEmbedUnimplementedDanmakuDaemonServer()
 }
 
@@ -50,8 +61,11 @@ type DanmakuDaemonServer interface {
 type UnimplementedDanmakuDaemonServer struct {
 }
 
-func (UnimplementedDanmakuDaemonServer) StartWatcher(context.Context, *StartWatcherRequest) (*StartWatcherResponse, error) {
+func (UnimplementedDanmakuDaemonServer) StartWatcher(context.Context, *WatcherRequest) (*WatcherResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StartWatcher not implemented")
+}
+func (UnimplementedDanmakuDaemonServer) StopWatcher(context.Context, *WatcherRequest) (*WatcherResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StopWatcher not implemented")
 }
 func (UnimplementedDanmakuDaemonServer) mustEmbedUnimplementedDanmakuDaemonServer() {}
 
@@ -67,7 +81,7 @@ func RegisterDanmakuDaemonServer(s grpc.ServiceRegistrar, srv DanmakuDaemonServe
 }
 
 func _DanmakuDaemon_StartWatcher_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(StartWatcherRequest)
+	in := new(WatcherRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -79,7 +93,25 @@ func _DanmakuDaemon_StartWatcher_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/danmaku.DanmakuDaemon/StartWatcher",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DanmakuDaemonServer).StartWatcher(ctx, req.(*StartWatcherRequest))
+		return srv.(DanmakuDaemonServer).StartWatcher(ctx, req.(*WatcherRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DanmakuDaemon_StopWatcher_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WatcherRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DanmakuDaemonServer).StopWatcher(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/danmaku.DanmakuDaemon/StopWatcher",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DanmakuDaemonServer).StopWatcher(ctx, req.(*WatcherRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -94,6 +126,10 @@ var DanmakuDaemon_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "StartWatcher",
 			Handler:    _DanmakuDaemon_StartWatcher_Handler,
+		},
+		{
+			MethodName: "StopWatcher",
+			Handler:    _DanmakuDaemon_StopWatcher_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

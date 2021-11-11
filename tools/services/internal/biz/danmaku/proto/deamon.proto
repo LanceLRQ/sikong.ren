@@ -7,16 +7,17 @@ option go_package = "launcher/internal/biz/danmaku";
 
 package danmaku;
 
-message StartWatcherRequest {
+message WatcherRequest {
     string session_id = 1;
     int32 room_id = 2;
 }
 
-message StartWatcherResponse {
+message WatcherResponse {
     bool result = 1;
     string message = 2;
 }
 
 service DanmakuDaemon {
-    rpc StartWatcher (StartWatcherRequest) returns (StartWatcherResponse) {};
+    rpc StartWatcher (WatcherRequest) returns (WatcherResponse) {};
+    rpc StopWatcher (WatcherRequest) returns (WatcherResponse) {};
 }

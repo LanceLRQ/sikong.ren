@@ -2,7 +2,6 @@ package danmaku
 
 import (
 	"context"
-	"fmt"
 	"google.golang.org/grpc"
 	danmaku "launcher/internal/biz/danmaku/proto"
 	"log"
@@ -13,14 +12,50 @@ type DaemonServer struct {
 	danmaku.UnimplementedDanmakuDaemonServer
 }
 
-func (s *DaemonServer) StartWatcher(ctx context.Context, req *danmaku.StartWatcherRequest) (*danmaku.StartWatcherResponse, error) {
-	fmt.Printf("%s | %d", req.SessionId, req.RoomId)
-	return &danmaku.StartWatcherResponse{
+// 启动监视器
+func (s *DaemonServer) StartWatcher(ctx context.Context, req *danmaku.WatcherRequest) (*danmaku.WatcherResponse, error) {
+	worker, err := NewLiveWatcher(int(req.RoomId), req.SessionId)
+	if err != nil {
+		return &danmaku.WatcherResponse{
+			Result: false,
+			Message: err.Error(),
+		}, nil
+	}
+	log.Printf("[rpc] Connecting room: %d (%s)", req.RoomId, req.SessionId)
+	// 启动监视器
+	worker.Start()
+	return &danmaku.WatcherResponse{
 		Result: true,
-		Message: "Done",
+		Message: "done",
 	}, nil
 }
 
+// 关闭监视器
+func (s *DaemonServer) StopWatcher(ctx context.Context, req *danmaku.WatcherRequest) (*danmaku.WatcherResponse, error) {
+	rel, ok := WatcherPool.Load(int(req.RoomId))
+	if !ok {
+		return &danmaku.WatcherResponse {
+			Result:  false,
+			Message: "watcher is not exists",
+		}, nil
+	}
+	worker := rel.(*LiveWatcher)
+	if !worker.working {
+		return &danmaku.WatcherResponse {
+			Result:  false,
+			Message: "watcher is not working",
+		}, nil
+	}
+	log.Printf("[rpc] Closing room: %d", req.RoomId)
+	// 停止
+	worker.Stop()
+	return &danmaku.WatcherResponse{
+		Result:  true,
+		Message: "done",
+	}, nil
+}
+
+// 运行RPC服务器
 func RunServer() {
 	listen, err := net.Listen("tcp", "0.0.0.0:8977")
 	if err != nil {

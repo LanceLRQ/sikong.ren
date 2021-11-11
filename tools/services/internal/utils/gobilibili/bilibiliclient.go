@@ -140,12 +140,13 @@ func (bili *BiliBiliClient) RegHandleFunc(cmd CmdType, hfunc HandleFunc) {
 
 // ConnectServer define
 func (bili *BiliBiliClient) ConnectServer(roomID int) error {
-	log.Println("Getting real room ID ....")
+	log.Println("[danmaku] Getting real room ID ....")
 	roomID, err := getRealRoomID(roomID)
 	if err != nil {
 		return err
 	}
-	log.Println("Entering room ....")
+	log.Printf("[danmaku] Real room id is %d", roomID)
+	log.Println("[danmaku] Entering room ....")
 	dstAddr := fmt.Sprintf("%s:%d", bili.ChatHost, bili.ChatPort)
 	dstConn, err := net.Dial("tcp", dstAddr) //进行tcp连接
 	if err != nil {
@@ -153,7 +154,7 @@ func (bili *BiliBiliClient) ConnectServer(roomID int) error {
 	}
 	bili.serverConn = dstConn
 	bili.roomID = roomID
-	log.Println("弹幕链接中。。。")
+	log.Println("[danmaku] Listening danmaku message...")
 	bili.SendJoinChannel(roomID)
 	bili.connected = true
 	// 建立心跳狗肉停
@@ -322,6 +323,8 @@ func (bili *BiliBiliClient) callCmdHandlerChain(cmd CmdType, c *Context) {
 }
 
 func (bili *BiliBiliClient) Close() error {
+	log.Println("[danmaku] Close by user")
+	bili.connected = false
 	return bili.serverConn.Close()
 }
 
