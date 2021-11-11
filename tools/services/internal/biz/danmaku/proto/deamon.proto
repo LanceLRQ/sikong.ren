@@ -20,4 +20,6 @@ message WatcherResponse {
 service DanmakuDaemon {
     rpc StartWatcher (WatcherRequest) returns (WatcherResponse) {};
     rpc StopWatcher (WatcherRequest) returns (WatcherResponse) {};
+    rpc KeepAlive (WatcherRequest) returns (WatcherResponse) {};
+    rpc IsAlive (WatcherRequest) returns (WatcherResponse) {};
 }

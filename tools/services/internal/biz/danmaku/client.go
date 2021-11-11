@@ -19,9 +19,10 @@ func RunClient () {
 	// Contact the server and print out its response.
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.StopWatcher(ctx, &danmaku.WatcherRequest{ SessionId: "ab111c", RoomId: 102})
+	r, err := c.IsAlive(ctx, &danmaku.WatcherRequest{ SessionId: "ab111c", RoomId: 103})
 	if err != nil {
 		log.Fatalf("could not run: %v", err)
 	}
-	log.Printf("Result: %s", r.GetMessage())
+	log.Printf("Result: %v", r.GetResult())
+	log.Printf("Message: %s", r.GetMessage())
 }

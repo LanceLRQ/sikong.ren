@@ -20,6 +20,8 @@ const _ = grpc.SupportPackageIsVersion7
 type DanmakuDaemonClient interface {
 	StartWatcher(ctx context.Context, in *WatcherRequest, opts ...grpc.CallOption) (*WatcherResponse, error)
 	StopWatcher(ctx context.Context, in *WatcherRequest, opts ...grpc.CallOption) (*WatcherResponse, error)
+	KeepAlive(ctx context.Context, in *WatcherRequest, opts ...grpc.CallOption) (*WatcherResponse, error)
+	IsAlive(ctx context.Context, in *WatcherRequest, opts ...grpc.CallOption) (*WatcherResponse, error)
 }
 
 type danmakuDaemonClient struct {
@@ -48,12 +50,32 @@ func (c *danmakuDaemonClient) StopWatcher(ctx context.Context, in *WatcherReques
 	return out, nil
 }
 
+func (c *danmakuDaemonClient) KeepAlive(ctx context.Context, in *WatcherRequest, opts ...grpc.CallOption) (*WatcherResponse, error) {
+	out := new(WatcherResponse)
+	err := c.cc.Invoke(ctx, "/danmaku.DanmakuDaemon/KeepAlive", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *danmakuDaemonClient) IsAlive(ctx context.Context, in *WatcherRequest, opts ...grpc.CallOption) (*WatcherResponse, error) {
+	out := new(WatcherResponse)
+	err := c.cc.Invoke(ctx, "/danmaku.DanmakuDaemon/IsAlive", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DanmakuDaemonServer is the server API for DanmakuDaemon service.
 // All implementations must embed UnimplementedDanmakuDaemonServer
 // for forward compatibility
 type DanmakuDaemonServer interface {
 	StartWatcher(context.Context, *WatcherRequest) (*WatcherResponse, error)
 	StopWatcher(context.Context, *WatcherRequest) (*WatcherResponse, error)
+	KeepAlive(context.Context, *WatcherRequest) (*WatcherResponse, error)
+	IsAlive(context.Context, *WatcherRequest) (*WatcherResponse, error)
 	mustEmbedUnimplementedDanmakuDaemonServer()
 }
 
@@ -66,6 +88,12 @@ func (UnimplementedDanmakuDaemonServer) StartWatcher(context.Context, *WatcherRe
 }
 func (UnimplementedDanmakuDaemonServer) StopWatcher(context.Context, *WatcherRequest) (*WatcherResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StopWatcher not implemented")
+}
+func (UnimplementedDanmakuDaemonServer) KeepAlive(context.Context, *WatcherRequest) (*WatcherResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method KeepAlive not implemented")
+}
+func (UnimplementedDanmakuDaemonServer) IsAlive(context.Context, *WatcherRequest) (*WatcherResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsAlive not implemented")
 }
 func (UnimplementedDanmakuDaemonServer) mustEmbedUnimplementedDanmakuDaemonServer() {}
 
@@ -116,6 +144,42 @@ func _DanmakuDaemon_StopWatcher_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DanmakuDaemon_KeepAlive_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WatcherRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DanmakuDaemonServer).KeepAlive(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/danmaku.DanmakuDaemon/KeepAlive",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DanmakuDaemonServer).KeepAlive(ctx, req.(*WatcherRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DanmakuDaemon_IsAlive_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WatcherRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DanmakuDaemonServer).IsAlive(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/danmaku.DanmakuDaemon/IsAlive",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DanmakuDaemonServer).IsAlive(ctx, req.(*WatcherRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DanmakuDaemon_ServiceDesc is the grpc.ServiceDesc for DanmakuDaemon service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -130,6 +194,14 @@ var DanmakuDaemon_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "StopWatcher",
 			Handler:    _DanmakuDaemon_StopWatcher_Handler,
+		},
+		{
+			MethodName: "KeepAlive",
+			Handler:    _DanmakuDaemon_KeepAlive_Handler,
+		},
+		{
+			MethodName: "IsAlive",
+			Handler:    _DanmakuDaemon_IsAlive_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

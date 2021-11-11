@@ -5,6 +5,7 @@ import (
 	"launcher/internal/utils/gobilibili"
 	"log"
 	"sync"
+	"time"
 )
 
 type LiveWatcher struct {
@@ -14,7 +15,33 @@ type LiveWatcher struct {
 	working bool
 }
 
+const MaxWatcherAliveTime = 600 * time.Second
+const WatcherAliveMonitorSleepTime = 60 * time.Second
+
 var WatcherPool sync.Map
+var WatcherExpireAt sync.Map
+
+func WatcherMonitor () {
+	log.Println("[monitor] danmaku worker is ready")
+	for {
+		time.Sleep(WatcherAliveMonitorSleepTime)
+		WatcherExpireAt.Range(func(key, value interface{}) bool {
+			expireAt := value.(time.Time)
+			if expireAt.Before(time.Now()) { // 如果过期，清理
+				roomId := key.(int)
+				t, ok := WatcherPool.Load(roomId)
+				if ok {
+					worker := t.(*LiveWatcher)
+					if worker.working {
+						log.Printf("[monitor] danmaku worker (room: %s) is inactive, force stop!")
+						worker.Stop()
+					}
+				}
+			}
+			return true
+		})
+	}
+}
 
 func NewLiveWatcher(roomId int, sessionId string) (*LiveWatcher, error) {
 	// 先看看池子里有没有watcher
@@ -33,6 +60,7 @@ func NewLiveWatcher(roomId int, sessionId string) (*LiveWatcher, error) {
 	}
 	// 写入池子
 	WatcherPool.Store(roomId, watcher)
+	WatcherExpireAt.Store(roomId, time.Now().Add(MaxWatcherAliveTime))
 	return watcher, nil
 }
 
@@ -47,6 +75,23 @@ func (w *LiveWatcher) Start() {
 func (w *LiveWatcher) Stop() {
 	_ = w.client.Close()
 	w.working = false
+	WatcherPool.Delete(w.roomId)
+	WatcherExpireAt.Delete(w.roomId)
+}
+
+// 获取Expire时间
+func (w *LiveWatcher) ExpireAt() (*time.Time, error) {
+	rel, ok := WatcherExpireAt.Load(w.roomId)
+	expireAt := rel.(time.Time)
+	if ok {
+		return &expireAt, nil
+	}
+	return nil, fmt.Errorf("worker not exists")
+}
+
+// 心跳
+func (w *LiveWatcher) KeepAlive() {
+	WatcherExpireAt.Store(w.roomId, time.Now().Add(MaxWatcherAliveTime))
 }
 
 // 注册事件监听
@@ -71,6 +116,7 @@ func (w *LiveWatcher) connect() {
 	// 传入房间号
 	err := w.client.ConnectServer(w.roomId)
 	if err != nil {
+		w.working = false
 		log.Printf("[danmaku] Error: %s\n", err.Error())
 	}
 }
