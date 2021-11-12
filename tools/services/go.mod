@@ -6,6 +6,7 @@ require (
 	github.com/ajg/form v1.5.1 // indirect
 	github.com/bitly/go-simplejson v0.5.0
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
+	github.com/go-redis/redis v6.15.9+incompatible // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/gorilla/websocket v1.4.2
 	github.com/imkira/go-interpol v1.1.0 // indirect

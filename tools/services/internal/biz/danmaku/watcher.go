@@ -22,7 +22,7 @@ var WatcherPool sync.Map
 var WatcherExpireAt sync.Map
 
 func WatcherMonitor () {
-	log.Println("[monitor] danmaku worker is ready")
+	log.Println("[monitor] Danmaku worker is ready")
 	for {
 		time.Sleep(WatcherAliveMonitorSleepTime)
 		WatcherExpireAt.Range(func(key, value interface{}) bool {
@@ -33,7 +33,7 @@ func WatcherMonitor () {
 				if ok {
 					worker := t.(*LiveWatcher)
 					if worker.working {
-						log.Printf("[monitor] danmaku worker (room: %s) is inactive, force stop!")
+						log.Printf("[monitor] Danmaku worker (room: %s) is inactive, force stop!")
 						worker.Stop()
 					}
 				}

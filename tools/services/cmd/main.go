@@ -32,17 +32,14 @@ func main () {
 			&cli.Command{
 				Name: "danmaku",
 				Action: func(context *cli.Context) error {
-					if context.Bool("c") {
-						danmaku.RunClient()
-					} else {
-						danmaku.RunServer()
-					}
-					return nil
+					return danmaku.RunServer(context.String("config"))
 				},
 				Flags: []cli.Flag{
-					&cli.BoolFlag{
-						Name: "c",
-						Value: false,
+					&cli.StringFlag{
+						Name: "config",
+						Aliases: []string { "c" },
+						Value: "./configs/server.yml",
+						Usage: "server config file",
 					},
 				},
 			},

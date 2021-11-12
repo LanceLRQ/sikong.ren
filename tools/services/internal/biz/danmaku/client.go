@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// DEMO
 func RunClient () {
 	conn, err := grpc.Dial("127.0.0.1:8977", grpc.WithInsecure())
 	if err != nil {
@@ -19,7 +20,7 @@ func RunClient () {
 	// Contact the server and print out its response.
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.IsAlive(ctx, &danmaku.WatcherRequest{ SessionId: "ab111c", RoomId: 103})
+	r, err := c.StartWatcher(ctx, &danmaku.WatcherRequest{ SessionId: "ab111c", RoomId: 103})
 	if err != nil {
 		log.Fatalf("could not run: %v", err)
 	}

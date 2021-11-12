@@ -1,4 +1,4 @@
-package data
+package structs
 
 type RESTResult struct {
 	Status bool `json:"status"`

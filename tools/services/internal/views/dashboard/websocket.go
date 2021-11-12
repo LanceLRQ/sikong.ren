@@ -5,7 +5,7 @@ import (
 	"github.com/kataras/iris/v12/websocket"
 	"github.com/kataras/neffos"
 	neffosGorilla "github.com/kataras/neffos/gorilla"
-	"launcher/internal/data"
+	"launcher/internal/structs"
 	"launcher/internal/server"
 	"log"
 	"net/http"
@@ -21,7 +21,7 @@ func newGameWebsocketView() *neffos.Server {
 				if !c.Conn.IsClient() {
 					c.Conn.Server().Broadcast(c, msg)
 				}
-				server.GameStatus.DrawingHistory = append(server.GameStatus.DrawingHistory, data.DrawingOperation{
+				server.GameStatus.DrawingHistory = append(server.GameStatus.DrawingHistory, structs.DrawingOperation{
 					Type: "draw",
 					Msg: string(msg.Body),
 				})
@@ -32,14 +32,14 @@ func newGameWebsocketView() *neffos.Server {
 					c.Conn.Server().Broadcast(c, msg)
 				}
 				// clean history
-				server.GameStatus.DrawingHistory = []data.DrawingOperation{}
+				server.GameStatus.DrawingHistory = []structs.DrawingOperation{}
 				return nil
 			},
 			"undo": func(c *neffos.NSConn, msg neffos.Message) error {
 				if !c.Conn.IsClient() {
 					c.Conn.Server().Broadcast(c, msg)
 				}
-				server.GameStatus.DrawingHistory = append(server.GameStatus.DrawingHistory, data.DrawingOperation{
+				server.GameStatus.DrawingHistory = append(server.GameStatus.DrawingHistory, structs.DrawingOperation{
 					Type: "undo",
 					Msg: string(msg.Body),
 				})

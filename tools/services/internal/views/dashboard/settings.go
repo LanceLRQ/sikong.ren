@@ -7,7 +7,7 @@ import (
 	"github.com/kataras/neffos"
 	"io/ioutil"
 	"launcher/internal/biz"
-	"launcher/internal/data"
+	"launcher/internal/structs"
 	"launcher/internal/errors"
 	"launcher/internal/server"
 	"launcher/internal/utils"
@@ -64,7 +64,7 @@ func AddRiddle (ctx iris.Context) {
 		return
 	}
 
-	newItem := data.RiddleInfo{
+	newItem := structs.RiddleInfo{
 		Id: server.RiddleListConfig.AtomicId + 1,
 		Type: typeId,
 		Keywords: strings.Split(strings.Replace(keywordsText, "，", ",", -1), ","),
@@ -181,11 +181,11 @@ func GameChangeRiddle (ctx iris.Context) {
 	}
 
 	server.GameStatus.CurrentDanmaku = []gobilibili.DanmuInfo{}
-	server.GameStatus.DrawingHistory = []data.DrawingOperation{}
+	server.GameStatus.DrawingHistory = []structs.DrawingOperation{}
 
 	sMsg := struct {
-		CurrentId     int              `json:"current_id"`
-		CurrentRiddle *data.RiddleInfo `json:"current_riddle"`
+		CurrentId     int                 `json:"current_id"`
+		CurrentRiddle *structs.RiddleInfo `json:"current_riddle"`
 	}{
 		CurrentId:     server.GameStatus.CurrentId,
 		CurrentRiddle: server.GameStatus.CurrentRiddle,

@@ -5,32 +5,17 @@ import (
 	"github.com/kataras/neffos"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
-	"launcher/internal/data"
+	"launcher/internal/structs"
 	"launcher/internal/utils/gobilibili"
 	"os"
 	"path/filepath"
 )
 
-var Config data.ServerConfiguration
+var Config structs.ServerConfiguration
 
-// 全局可用的游戏状态
-var GameStatus = data.GameStatus {
-	CurrentId:      0, // <= 0 表示游戏没有开始
-	CurrentRiddle:  nil,
-	CurrentDanmaku: []gobilibili.DanmuInfo{},
-	GlobalDanmaku:  []gobilibili.DanmuInfo{},
-	DrawingHistory: []data.DrawingOperation{},
-}
+var DanmakuRedisDB = 1
 
-// 全局谜题列表
-var RiddleListConfig = data.RiddleListConfig {
-	RiddleList: data.RiddleList{},
-	AtomicId: 0,
-}
-
-// 全局websocket
-var DrawingWebSocketServer *neffos.Server = nil
-
+// 载入配置文件
 func LoadConfiguration(path string) error {
 	yamlFile, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -60,6 +45,24 @@ func LoadConfiguration(path string) error {
 			return fmt.Errorf("store dir must be a directory: %s", storePath)
 		}
 	}
-
 	return nil
 }
+
+
+// 全局可用的游戏状态
+var GameStatus = structs.GameStatus {
+	CurrentId:      0, // <= 0 表示游戏没有开始
+	CurrentRiddle:  nil,
+	CurrentDanmaku: []gobilibili.DanmuInfo{},
+	GlobalDanmaku:  []gobilibili.DanmuInfo{},
+	DrawingHistory: []structs.DrawingOperation{},
+}
+
+// 全局谜题列表
+var RiddleListConfig = structs.RiddleListConfig {
+	RiddleList: structs.RiddleList{},
+	AtomicId:   0,
+}
+
+// 全局websocket
+var DrawingWebSocketServer *neffos.Server = nil

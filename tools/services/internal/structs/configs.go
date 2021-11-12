@@ -1,4 +1,4 @@
-package data
+package structs
 
 type ServerConfiguration struct {
 	// Redis 配置
