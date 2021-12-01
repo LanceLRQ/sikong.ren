@@ -104,8 +104,6 @@ func RunServer(configFile string) error {
 	// 载入配置
 	err := server.LoadConfiguration(configFile)
 	if err != nil { return err }
-	// 连接Redis
-	go InitRedisConnect()
 	// 启动监控器
 	go WatcherMonitor()
 	// 启动RPC服务

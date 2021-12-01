@@ -7,6 +7,7 @@ require (
 	github.com/bitly/go-simplejson v0.5.0
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
 	github.com/go-redis/redis v6.15.9+incompatible // indirect
+	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/gorilla/websocket v1.4.2
 	github.com/imkira/go-interpol v1.1.0 // indirect
@@ -27,5 +28,6 @@ require (
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.1.0 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/yaml.v2 v2.2.4
-	gorm.io/gorm v1.22.2 // indirect
+	gorm.io/driver/mysql v1.2.1 // indirect
+	gorm.io/gorm v1.22.4 // indirect
 )

@@ -26,7 +26,8 @@ func main () {
 			},
 		},
 		Action: func(context *cli.Context) error {
-			return internal.RunServer(context.String("config"), context.String("listen"))
+			//return internal.RunServer(context.String("config"), context.String("listen"))
+			return nil
 		},
 		Commands: []*cli.Command{
 			&cli.Command{
@@ -41,6 +42,12 @@ func main () {
 						Value: "./configs/server.yml",
 						Usage: "server config file",
 					},
+				},
+			},
+			&cli.Command{
+				Name: "migrate",
+				Action: func(context *cli.Context) error {
+					return internal.RunMigration(context.String("config"))
 				},
 			},
 			&cli.Command{

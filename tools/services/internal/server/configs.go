@@ -6,14 +6,13 @@ import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"launcher/internal/structs"
-	"launcher/internal/utils/gobilibili"
 	"os"
 	"path/filepath"
 )
 
 var Config structs.ServerConfiguration
-
-var DanmakuRedisDB = 1
+// 全局websocket
+var DrawingWebSocketServer *neffos.Server = nil
 
 // 载入配置文件
 func LoadConfiguration(path string) error {
@@ -49,20 +48,11 @@ func LoadConfiguration(path string) error {
 }
 
 
-// 全局可用的游戏状态
-var GameStatus = structs.GameStatus {
-	CurrentId:      0, // <= 0 表示游戏没有开始
-	CurrentRiddle:  nil,
-	CurrentDanmaku: []gobilibili.DanmuInfo{},
-	GlobalDanmaku:  []gobilibili.DanmuInfo{},
-	DrawingHistory: []structs.DrawingOperation{},
-}
-
-// 全局谜题列表
-var RiddleListConfig = structs.RiddleListConfig {
-	RiddleList: structs.RiddleList{},
-	AtomicId:   0,
-}
-
-// 全局websocket
-var DrawingWebSocketServer *neffos.Server = nil
+//// 全局可用的游戏状态
+//var GameStatus = structs.GameStatus {
+//	CurrentId:      0, // <= 0 表示游戏没有开始
+//	CurrentRiddle:  nil,
+//	CurrentDanmaku: []gobilibili.DanmuInfo{},
+//	GlobalDanmaku:  []gobilibili.DanmuInfo{},
+//	DrawingHistory: []structs.DrawingOperation{},
+//}
